@@ -12,7 +12,7 @@ optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxi
 (opts, _) = optparser.parse_args()
 f_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.french)
 e_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.english)
-sys.stderr.write("Training with Dice's coefficient...")
+sys.stderr.write("Training with Baseline method coefficient...")
 bitext = [[sentence.strip().split() for sentence in pair] for pair in zip(open(f_data), open(e_data))[:opts.num_sents]]
 
 
@@ -29,12 +29,17 @@ def main():
     init_prob = 1.0/len(voc_f.keys())
     t_prev = defaultdict(int)
     t_cur = defaultdict(int)
-    fe_count = defaultdict(int)
-    e_count = defaultdict(int)
 
     iter_cnt = 0
-    for iter_cnt in range(3):
-        t_cur = copy.deepcopy(t_prev)
+    for iter_cnt in range(5):
+        sys.stderr.write("\nTraining")
+        # inherit last iteration
+        t_prev = copy.deepcopy(t_cur)
+        t_cur = defaultdict(int)
+
+        # init count 
+        fe_count = defaultdict(int)
+        e_count = defaultdict(int)
         for (n, (f, e)) in enumerate(bitext):
             for f_i in set(f):
                 norm_z = 0
@@ -50,6 +55,7 @@ def main():
             if n % 500 == 0:
                 sys.stderr.write(".")
 
+        sys.stderr.write("\nAsigning variable")
         for (k, (f_i, e_j)) in enumerate(fe_count.keys()):
             t_cur[f_i, e_j] = fe_count[f_i, e_j]/e_count[e_j]
             if k % 5000 == 0:
@@ -57,14 +63,13 @@ def main():
 
 
 
-    sys.stderr.write("\n")
-
+    sys.stderr.write("\nOutputing")
     for (f, e) in bitext:
         for (i, f_i) in enumerate(f):
             bestp = 0
             bestj = 0 
             for (j, e_j) in enumerate(e):
-                if t_cur.get((f_i, e_j), init_prob) > bestp:
+                if t_cur[f_i, e_j] > bestp:
                     bestp = t_cur[f_i, e_j]
                     bestj = j
 
