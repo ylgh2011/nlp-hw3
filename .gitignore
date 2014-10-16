@@ -1,0 +1,7 @@
+*.~
+*.o
+*.pyc
+*.ignore
+tags
+*.a
+
