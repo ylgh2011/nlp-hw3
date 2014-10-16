@@ -21,17 +21,16 @@ def main():
         logging.basicConfig(filename=opts.logfile, filemode='w', level=logging.INFO)
 
     # Initialization step
-    voc_f = defaultdict(int)
+    len_voc_f = 0
     for (n, (f, e)) in enumerate(bitext):
         for f_i in set(f):
-            voc_f[f_i] = 1
+            len_voc_f = 1
 
-    init_prob = 1.0/len(voc_f.keys())
+    init_prob = 1.0/float(len_voc_f)
     t_prev = defaultdict(int)
     t_cur = defaultdict(int)
 
-    iter_cnt = 0
-    for iter_cnt in range(5):
+    for iter_cnt in range(3):
         sys.stderr.write("\nTraining")
         # inherit last iteration
         t_prev = copy.deepcopy(t_cur)
@@ -41,12 +40,12 @@ def main():
         fe_count = defaultdict(int)
         e_count = defaultdict(int)
         for (n, (f, e)) in enumerate(bitext):
-            for f_i in set(f):
+            for f_i in f:
                 norm_z = 0
-                for e_j in set(e):
+                for e_j in e:
                     norm_z += t_prev.get((f_i, e_j), init_prob)
 
-                for e_j in set(e):
+                for e_j in e:
                     cnt = t_prev.get((f_i, e_j), init_prob)/norm_z
                     fe_count[f_i, e_j] += cnt
                     e_count[e_j] += cnt
