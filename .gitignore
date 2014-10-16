@@ -3,5 +3,5 @@
 *.pyc
 *.ignore
 tags
-*.a
+*.DS_Store
 
