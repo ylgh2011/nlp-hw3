@@ -27,14 +27,11 @@ def main():
             voc_f[f_i] = 1
 
     init_prob = 1.0 / float(len(voc_f.keys()))
-    t_prev = defaultdict(float)
-    t_cur = defaultdict(float)
+    t = defaultdict(float)
 
     for iter_cnt in range(3):
         sys.stderr.write("\nTraining")
         # inherit last iteration
-        t_prev = t_cur
-        t_cur = defaultdict(float)
 
         # init count 
         fe_count = defaultdict(float)
@@ -43,10 +40,10 @@ def main():
             for f_i in f:
                 norm_z = 0
                 for e_j in e:
-                    norm_z += t_prev.get((f_i, e_j), init_prob)
+                    norm_z += t.get((f_i, e_j), init_prob)
 
                 for e_j in e:
-                    cnt = t_prev.get((f_i, e_j), init_prob)/norm_z
+                    cnt = t.get((f_i, e_j), init_prob)/norm_z
                     fe_count[f_i, e_j] += cnt
                     e_count[e_j] += cnt
 
@@ -54,9 +51,11 @@ def main():
             if n % 500 == 0:
                 sys.stderr.write(".")
 
+        # clean up t_prev
+        t = defaultdict(float)
         sys.stderr.write("\nAsigning variable")
         for (k, (f_i, e_j)) in enumerate(fe_count.keys()):
-            t_cur[f_i, e_j] = fe_count[f_i, e_j]/e_count[e_j]
+            t[f_i, e_j] = fe_count[f_i, e_j]/e_count[e_j]
             if k % 5000 == 0:
                 sys.stderr.write(".")
 
@@ -68,8 +67,8 @@ def main():
             bestp = 0
             bestj = 0 
             for (j, e_j) in enumerate(e):
-                if t_cur[f_i, e_j] > bestp:
-                    bestp = t_cur[f_i, e_j]
+                if t[f_i, e_j] > bestp:
+                    bestp = t[f_i, e_j]
                     bestj = j
 
             sys.stdout.write("%i-%i " % (i,bestj))
