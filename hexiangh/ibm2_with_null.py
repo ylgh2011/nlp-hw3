@@ -92,8 +92,8 @@ def main():
             bestp = 0
             bestj = 0 
             for (j, e_j) in enumerate(e):
-                if t[f_i, e_j] > bestp:
-                    bestp = t[f_i, e_j]
+                if t[f_i, e_j]*q[j,i,l,m] > bestp:
+                    bestp = t[f_i, e_j]*q[j,i,l,m]
                     bestj = j
             if e[bestj] != 'NULL':
                 # subtract bestj with 1 since with addition of NULL word, the position of english word is shifted right

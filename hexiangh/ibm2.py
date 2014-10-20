@@ -84,12 +84,14 @@ def main():
 
     sys.stderr.write("\nOutputing")
     for (f, e) in bitext:
+        m = len(f)
+        l = len(e)
         for (i, f_i) in enumerate(f):
             bestp = 0
             bestj = 0 
             for (j, e_j) in enumerate(e):
-                if t[f_i, e_j] > bestp:
-                    bestp = t[f_i, e_j]
+                if t[f_i, e_j]*q[j,i,l,m] > bestp:
+                    bestp = t[f_i, e_j]*q[j,i,l,m]
                     bestj = j
 
             sys.stdout.write("%i-%i " % (i,bestj))
