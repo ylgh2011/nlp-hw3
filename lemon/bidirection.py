@@ -9,6 +9,7 @@ optparser.add_option("-e", "--english", dest="english", default="en", help="suff
 optparser.add_option("-f", "--french", dest="french", default="fr", help="suffix of French (source language) filename (default=fr)")
 optparser.add_option("-l", "--logfile", dest="logfile", default=None, help="filename for logging output")
 optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxint, type="int", help="Number of sentences to use for training and alignment")
+optparser.add_option("-i", "--iteration", dest="iteration", default=5, type="int", help="The iteration number for the alignment learning.")
 (opts, _) = optparser.parse_args()
 f_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.french)
 e_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.english)
@@ -69,7 +70,7 @@ def main():
     t_ef = defaultdict(float)
     q_ef = defaultdict(float)
 
-    for iter_cnt in range(5):
+    for iter_cnt in range(opts.iteration):
         sys.stderr.write("\nTraining")
         # inherit last iteration
 
@@ -110,12 +111,16 @@ def main():
         for (i, f_i) in enumerate(f):
             bestp = 0
             bestj = 0 
+            m = len(f)
+            l = len(e)
             for (j, e_j) in enumerate(e):
-                if t_fe[f_i, e_j]*t_ef[e_j, f_i] > bestp:
-                    bestp = t_fe[f_i, e_j]*t_ef[e_j, f_i]
+                mat = t_fe[f_i, e_j]*t_ef[e_j, f_i]*q_fe[j, i, l, m]*q_ef[i, j, m, l]
+                if  mat > bestp:
+                    bestp = mat 
                     bestj = j
 
-            sys.stdout.write("%i-%i " % (i,bestj))
+            if bestp != 0:
+                sys.stdout.write("%i-%i " % (i,bestj))
         sys.stdout.write("\n")
 
 if __name__ == "__main__":
