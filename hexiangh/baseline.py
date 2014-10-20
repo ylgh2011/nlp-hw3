@@ -33,7 +33,7 @@ def main():
     for iter_cnt in range(3):
         sys.stderr.write("\nTraining")
         # inherit last iteration
-        t_prev = copy.deepcopy(t_cur)
+        t_prev = t_cur
         t_cur = defaultdict(float)
 
         # init count 
