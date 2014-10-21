@@ -52,7 +52,7 @@ def update_dictionary(t, q, fe_count, e_count, jilm_count, ilm_count):
         if k % 5000 == 0:
             sys.stderr.write(".")
 
-def alignment_line(f, e, t_fe, t_ef, q_fe, q_ef):
+def alignment_line(f, e, t_fe, t_ef, q_fe, q_ef, swap=False):
     line_alg = []
     for (i, f_i) in enumerate(f):
         bestp = 0
@@ -66,7 +66,10 @@ def alignment_line(f, e, t_fe, t_ef, q_fe, q_ef):
                 bestj = j
 
         if bestp != 0:
-            line_alg.append("{}-{}".format(i,bestj))
+            if (swap):
+                line_alg.append("{}-{}".format(bestj,i))
+            else:
+                line_alg.append("{}-{}".format(i,bestj))
 
     return line_alg
 
@@ -126,8 +129,8 @@ def main():
 
     sys.stderr.write("\nOutputing")
     for (f, e) in bitext:
-        line_alg = (set(alignment_line(f, e, t_fe, t_ef, q_fe, q_ef))
-                .intersection(set(alignment_line(e, f, t_ef, t_fe, q_ef, q_fe))))
+        line_alg = (set(alignment_line(f, e, t_fe, t_ef, q_fe, q_ef)).intersection
+                   (set(alignment_line(e, f, t_ef, t_fe, q_ef, q_fe, True))))
         for i in line_alg:
             sys.stdout.write(i+' ')
         sys.stdout.write("\n")
