@@ -54,6 +54,7 @@ def update_dictionary(t, q, fe_count, e_count, jilm_count, ilm_count):
         if k % 5000 == 0:
             sys.stderr.write(".")
 
+
 def alignment_line(f, e, t_fe, t_ef, q_fe, q_ef, swap=False):
     line_alg = []
     for (i, f_i) in enumerate(f):
