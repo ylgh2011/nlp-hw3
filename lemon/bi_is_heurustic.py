@@ -139,7 +139,8 @@ def main():
         line_alg = list(set(alignment_line(f, e, t_fe, t_ef, q_fe, q_ef)).intersection
                    (set(alignment_line(e, f, t_ef, t_fe, q_ef, q_fe, True))))
         # heuristic matching
-        sorted(line_alg, cmp=align_compare)
+        line_alg.sort(align_compare)
+        # sys.stderr.write(line_alg.__str__())
         lasti = -1
         pre_diff = 0
         for (i, align) in enumerate(line_alg):
