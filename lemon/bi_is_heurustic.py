@@ -34,7 +34,7 @@ def line_match(f, e, t_fe, q_fe, t_ef, q_ef, fe_count, e_count, jilm_count, ilm_
 
         for (j, e_j) in enumerate(e):
             cnt = (t_fe.get((f_i, e_j), init_prob_t)*q_fe.get((j,i,l,m), init_prob_q)*
-                   t_ef.get((e_j, f_i), init_prob_t)*q_ef.get((i,j,m,l), init_prob_q))/norm_z
+                   t_ef.get((e_j, f_i), init_prob_t)*q_ef.get((i,j,m,l), init_prob_q))/max(norm_z, 10**-8)
             fe_count[f_i, e_j] += cnt
             e_count[e_j] += cnt
             jilm_count[j,i,l,m] += cnt
