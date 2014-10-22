@@ -2,6 +2,8 @@
 
 Our algorithm can be summarized as an IBM model 2 with bidirection agree voiting, intersection and diagonal heuristic operation
 
+
+
 # IBM Model 2
 
 After failing to implement a real HMM based model, we adapt a cheaper noisy-channel model, which is IBM model 2. According to its definition, an IBM-M2 model consists of a finite set E of English words, a set F of French words, and integers M and L specifying the maximum length of French and English sentences respectively. The parameters of the model are as follows:
@@ -39,7 +41,9 @@ instance:
 2  *
 3          ()
 4              ()
-Aligned the diagonal word pairs if ones of them is not chosen.
+Aligned the diagonal word pairs if that row is not chosen.
+In this case that would be [1-1], [3-3], [4-4]
+
 
 
 # Usage: 
