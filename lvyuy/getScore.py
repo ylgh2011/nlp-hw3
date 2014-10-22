@@ -8,7 +8,7 @@ optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxi
 optparser.add_option("-i", "--iteration", dest="iteration", default=5, type="int", help="The iteration number for the alignment learning.")
 
 optparser.add_option("-w", "--whichScript", dest="whichScript", default='bi_is_joint.py', help="choose which script to run")
-optparser.add_option("-o", "--outputFile", dest="outputFile", default='out.ignore', help="Name of the output file")
+optparser.add_option("-o", "--outputFile", dest="outputFile", default='out.ignore', help="Name of the output file, set 'noOut' to use pipe instead of output file")
 
 (opts, _) = optparser.parse_args()
 

@@ -2,6 +2,8 @@
 
 Our algorithm can be summarized as IBM model 2 with bidirection, intersection and diagonal heuristic operation
 
+
+
 # IBM Model 2
 
 
@@ -38,7 +40,9 @@ instance:
 2  *
 3          ()
 4              ()
-Aligned the diagonal word pairs if ones of them is not chosen.
+Aligned the diagonal word pairs if that row is not chosen.
+In this case that would be [1-1], [3-3], [4-4]
+
 
 
 # Usage: 
