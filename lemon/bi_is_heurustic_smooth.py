@@ -10,6 +10,7 @@ optparser.add_option("-f", "--french", dest="french", default="fr", help="suffix
 optparser.add_option("-l", "--logfile", dest="logfile", default=None, help="filename for logging output")
 optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxint, type="int", help="Number of sentences to use for training and alignment")
 optparser.add_option("-i", "--iteration", dest="iteration", default=5, type="int", help="The iteration number for the alignment learning.")
+# optparser.add_option("-v", "--smoothInitSize", dest="smoothInitSize", default=1000, type="int", help="The size of smooth factor V at first iteration (will be updated later by distinct words size)")
 (opts, _) = optparser.parse_args()
 f_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.french)
 e_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.english)
@@ -21,6 +22,10 @@ bitext = [[sentence.strip().split() for sentence in pair] for pair in zip(open(f
 init_prob_t = 1.0 / 30.0
 init_prob_q = 1.0 / 30.0
 
+# Vt_smooth = opts.smoothInitSize
+Vt_smooth = opts.num_sents
+Vq_smooth = 100.0
+n_smooth = 0.01
 
 def line_match(f, e, t_fe, q_fe, t_ef, q_ef, fe_count, e_count, jilm_count, ilm_count):
     m = len(f)
@@ -44,13 +49,13 @@ def line_match(f, e, t_fe, q_fe, t_ef, q_ef, fe_count, e_count, jilm_count, ilm_
 def update_dictionary(t, q, fe_count, e_count, jilm_count, ilm_count):
     # update t dictionary
     for (k, (f_i, e_j)) in enumerate(fe_count.keys()):
-        t[f_i, e_j] = fe_count[f_i, e_j]/max(e_count[e_j], 10**-8)
+        t[f_i, e_j] = (fe_count[f_i, e_j] + n_smooth)/(e_count[e_j] + n_smooth*Vt_smooth)
         if k % 50000 == 0:
             sys.stderr.write(".")
 
     # update q dictionary
     for (k, (j, i, l, m)) in enumerate(jilm_count.keys()):
-        q[j, i, l, m] = jilm_count[j,i,l,m]/max(ilm_count[i,l,m], 10**-8)
+        q[j, i, l, m] = (jilm_count[j,i,l,m] + n_smooth)/(ilm_count[i,l,m] + n_smooth*Vq_smooth)
         if k % 5000 == 0:
             sys.stderr.write(".")
 
@@ -131,7 +136,13 @@ def main():
         q_ef = defaultdict(float)
 
         sys.stderr.write("\nAsigning variable")
+        
+        # Vt_smooth = float(len(f_count.keys()))
+        # Vq_smooth = float(len(ilm_fe_count.keys()))
         update_dictionary(t_fe, q_fe, fe_count, e_count, jilm_fe_count, ilm_fe_count)
+        
+        # Vt_smooth = float(len(e_count.keys()))
+        # Vq_smooth = float(len(ilm_ef_count.keys()))
         update_dictionary(t_ef, q_ef, ef_count, f_count, jilm_ef_count, ilm_ef_count)
 
     sys.stderr.write("\nOutputing")
