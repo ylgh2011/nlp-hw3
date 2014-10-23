@@ -2,8 +2,6 @@
 
 Our algorithm can be summarized as an IBM model 2 with bidirection agree voiting, intersection and diagonal heuristic operation
 
-
-
 # IBM Model 2
 
 After failing to implement a real HMM based model, we adapt a cheaper noisy-channel model, which is IBM model 2. According to its definition, an IBM-M2 model consists of a finite set E of English words, a set F of French words, and integers M and L specifying the maximum length of French and English sentences respectively. The parameters of the model are as follows:
@@ -17,9 +15,7 @@ While using IBM model 2 to update the dictionary Pr(f | e) (probability of a Fra
 
 After the training phase (several iterations), the alignment between a pair of words (f_i, e_j) is decided by the product of Pr( f_i | e_j ) and Pr( e_j | f_i ) instead of a single probability.
 
-
-
-# Intersection
+# Intersection decoding
 
 A pair of words will be decided as an alignment only if it is in the intersection set of alignment set of Franch given English and alignment set of English given Franch.
 
@@ -45,24 +41,31 @@ Aligned the diagonal word pairs if that row is not chosen.
 In this case that would be [1-1], [3-3], [4-4]
 
 
+# Final Score:
+* The final score (AER: 0.266) for our group is produced by running the full text file for 10 times with penalty value of 0.85
+** You could replicate the result by following command
+*** python final_method.py -p europarl -f de -i 10 -t 0.85 > out.a 
+** Please notice that with this method, it will consume about 2 hours to complete the align procedure, the memory space this method will take is around 12 GB
 
 # Usage: 
-* Command line: python bidirectional_intersection_with_heurustic.py [options]
-* Options:
-    -h, --help            show this help message and exit
-    -d DATADIR, --datadir=DATADIR
-                                                data directory (default=data)
-    -p FILEPREFIX, --prefix=FILEPREFIX
-                                                prefix of parallel data files (default=hansards)
-    -e ENGLISH, --english=ENGLISH
-                                                suffix of English (target language) filename
-                                                (default=en)
-    -f FRENCH, --french=FRENCH
-                                                suffix of French (source language) filename
-                                                (default=fr)
-    -l LOGFILE, --logfile=LOGFILE
-                                                filename for logging output
-    -n NUM_SENTS, --num_sentences=NUM_SENTS
-                                                Number of sentences to use for training and alignment
-    -i ITERATION, --iteration=ITERATION
-                                                The iteration number for the alignment learning.
+* Command line: python final_method.py [options]
+Options:
+  -h, --help            show this help message and exit
+  -d DATADIR, --datadir=DATADIR
+                        data directory (default=data)
+  -p FILEPREFIX, --prefix=FILEPREFIX
+                        prefix of parallel data files (default=hansards)
+  -e ENGLISH, --english=ENGLISH
+                        suffix of English (target language) filename
+                        (default=en)
+  -f FRENCH, --french=FRENCH
+                        suffix of French (source language) filename
+                        (default=fr)
+  -l LOGFILE, --logfile=LOGFILE
+                        filename for logging output
+  -n NUM_SENTS, --num_sentences=NUM_SENTS
+                        Number of sentences to use for training and alignment
+  -i ITERATION, --iteration=ITERATION
+                        The iteration number for the alignment learning.
+  -t PENALTY, --penalty=PENALTY
+                        pow(pe, abs(i-j))

@@ -10,6 +10,7 @@ optparser.add_option("-f", "--french", dest="french", default="fr", help="suffix
 optparser.add_option("-l", "--logfile", dest="logfile", default=None, help="filename for logging output")
 optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxint, type="int", help="Number of sentences to use for training and alignment")
 optparser.add_option("-i", "--iteration", dest="iteration", default=5, type="int", help="The iteration number for the alignment learning.")
+optparser.add_option("-t", "--penalty", dest="penalty", default=1, type="float", help="pow(pe, abs(i-j))")
 (opts, _) = optparser.parse_args()
 f_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.french)
 e_data = "%s.%s" % (os.path.join(opts.datadir, opts.fileprefix), opts.english)
@@ -44,13 +45,13 @@ def line_match(f, e, t_fe, q_fe, t_ef, q_ef, fe_count, e_count, jilm_count, ilm_
 def update_dictionary(t, q, fe_count, e_count, jilm_count, ilm_count):
     # update t dictionary
     for (k, (f_i, e_j)) in enumerate(fe_count.keys()):
-        t[f_i, e_j] = fe_count[f_i, e_j]/e_count[e_j]
+        t[f_i, e_j] = fe_count[f_i, e_j]/max(e_count[e_j], 10**-8)
         if k % 50000 == 0:
             sys.stderr.write(".")
 
     # update q dictionary
     for (k, (j, i, l, m)) in enumerate(jilm_count.keys()):
-        q[j, i, l, m] = jilm_count[j,i,l,m]/ilm_count[i,l,m]
+        q[j, i, l, m] = jilm_count[j,i,l,m]/max(ilm_count[i,l,m], 10**-8)
         if k % 5000 == 0:
             sys.stderr.write(".")
 
@@ -64,7 +65,7 @@ def alignment_line(f, e, t_fe, t_ef, q_fe, q_ef, swap=False):
         l = len(e)
         for (j, e_j) in enumerate(e):
             mat = t_fe[f_i, e_j]*t_ef[e_j, f_i]*q_fe[j, i, l, m]*q_ef[i, j, m, l]
-            if  mat > bestp:
+            if  mat * pow(opts.penalty, abs(j-i)) > bestp:
                 bestp = mat 
                 bestj = j
 
