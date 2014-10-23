@@ -45,13 +45,13 @@ def line_match(f, e, t_fe, q_fe, t_ef, q_ef, fe_count, e_count, jilm_count, ilm_
 def update_dictionary(t, q, fe_count, e_count, jilm_count, ilm_count):
     # update t dictionary
     for (k, (f_i, e_j)) in enumerate(fe_count.keys()):
-        t[f_i, e_j] = fe_count[f_i, e_j]/e_count[e_j]
+        t[f_i, e_j] = fe_count[f_i, e_j]/max(e_count[e_j], 10**-8)
         if k % 50000 == 0:
             sys.stderr.write(".")
 
     # update q dictionary
     for (k, (j, i, l, m)) in enumerate(jilm_count.keys()):
-        q[j, i, l, m] = jilm_count[j,i,l,m]/ilm_count[i,l,m]
+        q[j, i, l, m] = jilm_count[j,i,l,m]/max(ilm_count[i,l,m], 10**-8)
         if k % 5000 == 0:
             sys.stderr.write(".")
 
