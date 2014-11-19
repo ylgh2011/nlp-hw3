@@ -77,10 +77,10 @@ def main():
 
     sys.stderr.write("\nDumping\n")
     out1 = gzip.open('ibm2.t.ds.gz', 'wb')
-    pickle.dump(t, output)
+    pickle.dump(t, out1)
     out1.close()
     out2 = gzip.open('ibm2.q.ds.gz', 'wb')
-    pickle.dump(q, output)
+    pickle.dump(q, out2)
     out2.close()
 
 
