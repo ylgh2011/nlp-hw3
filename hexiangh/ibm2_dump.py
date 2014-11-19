@@ -30,8 +30,8 @@ def main():
     t = defaultdict(float)
     q = defaultdict(float)
 
-    for iter_cnt in range(6):
-        sys.stderr.write("\nTraining")
+    for iter_cnt in range(5):
+        sys.stderr.write("\nTraining#{}".format(iter_cnt + 1))
         # inherit last iteration
 
         # init count 
@@ -76,10 +76,10 @@ def main():
 
 
     sys.stderr.write("\nDumping\n")
-    out1 = gizp.open('ibm2.t.ds.gz', 'wb')
+    out1 = gzip.open('ibm2.t.ds.gz', 'wb')
     pickle.dump(t, output)
     out1.close()
-    out2 = gizp.open('ibm2.q.ds.gz', 'wb')
+    out2 = gzip.open('ibm2.q.ds.gz', 'wb')
     pickle.dump(q, output)
     out2.close()
 
